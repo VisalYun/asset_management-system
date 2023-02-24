@@ -1,0 +1,48 @@
+body{
+    text-align: center;
+    padding: 5rem 0;
+}
+
+main .login-card {
+    width: 50%;
+    margin: 2rem auto;
+    box-shadow: 10px 5px 5px #ddd;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10rem 0;
+}
+
+main .login-card h2{
+    margin-bottom: 2rem;
+}
+
+main .login-card button{
+    width: fit-content;
+    margin: auto;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    background-color: #4285f4;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    padding: .15rem;
+    border-radius: 5px;
+}
+
+main .login-card button .btn-img{
+    background-color: white;
+    padding: 10px;
+}
+
+main .login-card button span{
+    margin: 0 1rem;
+}
+
+@media only screen and (max-width: 600px) {
+    main .login-card{
+        width: 100%;
+        padding: 7rem 0;
+    }
+}

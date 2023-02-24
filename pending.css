@@ -1,0 +1,34 @@
+.pending-request {
+    padding: 2rem;
+}
+
+.pending-request h1 {
+    margin-bottom: 1rem;
+}
+
+.pending-request table tr th.name-col{
+    width: 40%;
+}
+
+.pending-request table tr th.date-col{
+    width: 15%;
+}
+
+@media only screen and (max-width: 600px) {
+    .pending-request {
+        padding: 1rem 0;
+        overflow: scroll;
+    }
+
+    .pending-request h1{
+        margin: 0 1rem 1rem;
+    }
+
+    .pending-request table tr th.name-col{
+        width: auto;
+    }
+    
+    .pending-request table tr th.date-col{
+        width: auto;
+    }
+}

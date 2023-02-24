@@ -1,0 +1,70 @@
+main {
+    padding: 2rem;
+}
+
+main h1{
+    margin-bottom: 1rem;
+}
+
+form {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+form .form-section{
+    width: 50%;
+    box-shadow: 10px 5px 5px #ddd;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 1rem;
+}
+
+form .form-section .input-group{
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+}
+
+form .form-section .input-group label {
+    width: 30%;
+}
+
+form .form-section .input-group input,
+form .form-section .input-group select,
+form .form-section .input-group textarea {
+    width: 70%;
+    font-size: 18px;
+    padding: .5rem;
+}
+
+form .form-section .input-group button {
+    width: 30%;
+    margin: auto;
+    border: none;
+    outline: none;
+    padding: .5rem 0;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form .approver-section{
+    width: 40%;
+}
+
+form .approver-section ul {
+    list-style-type: none;
+    height: 200px;
+    border: 1px solid black;
+    margin: 1rem 0;
+}
+
+form .approver-section ul li {
+    border-bottom: 1px solid black;
+    padding: .5rem;
+    background-color: #eee;
+    color: #777;
+}

@@ -1,0 +1,34 @@
+.current-asset {
+    padding: 2rem;
+}
+
+.current-asset h1 {
+    margin-bottom: 1rem;
+}
+
+.current-asset table tr th.name-col{
+    width: 50%;
+}
+
+.current-asset table tr th.date-col{
+    width: 15%;
+}
+
+@media only screen and (max-width: 600px) {
+    .current-asset {
+        padding: 1rem 0;
+        overflow: scroll;
+    }
+
+    .current-asset h1{
+        margin: 0 1rem 1rem;
+    }
+
+    .current-asset table tr th.name-col{
+        width: auto;
+    }
+    
+    .current-asset table tr th.date-col{
+        width: auto;
+    }
+}
