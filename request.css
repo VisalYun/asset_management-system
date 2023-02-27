@@ -2,7 +2,7 @@ main {
     padding: 2rem;
 }
 
-main h1{
+main h1 {
     margin-bottom: 1rem;
 }
 
@@ -12,7 +12,7 @@ form {
     align-items: start;
 }
 
-form .form-section{
+form .form-section {
     width: 50%;
     box-shadow: 10px 5px 5px #ddd;
     border-radius: 10px;
@@ -20,7 +20,7 @@ form .form-section{
     padding: 1rem;
 }
 
-form .form-section .input-group{
+form .form-section .input-group {
     margin: 1rem 0;
     display: flex;
     align-items: center;
@@ -51,7 +51,7 @@ form .form-section .input-group button {
     cursor: pointer;
 }
 
-form .approver-section{
+form .approver-section {
     width: 40%;
 }
 
@@ -67,4 +67,44 @@ form .approver-section ul li {
     padding: .5rem;
     background-color: #eee;
     color: #777;
+}
+
+@media only screen and (max-width: 900px) {
+    form {
+        flex-direction: column;
+    }
+
+    form .form-section {
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    form .approver-section {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    main {
+        padding: 2rem .5rem;
+    }
+
+    form .form-section .input-group {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    form .form-section .input-group label {
+        width: 100%;
+    }
+
+    form .form-section .input-group input,
+    form .form-section .input-group select,
+    form .form-section .input-group textarea {
+        width: 100%;
+    }
+
+    form .form-section .input-group button{
+        width: 70%;
+    }
 }
