@@ -40,7 +40,7 @@ form .form-section .input-group textarea {
     padding: .5rem;
 }
 
-form .form-section .input-group button {
+form .form-section .input-group input[type=submit] {
     width: 30%;
     margin: auto;
     border: none;
