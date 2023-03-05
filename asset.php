@@ -1,46 +1,3 @@
-<?php
-    $assets = [
-        [
-            "id" => 1,
-            "name" => "Car",
-            "physical_id" => "0283939",
-            "model" => "Tesla",
-            "total" => 1,
-            "added_date" => "2023-03-03",
-            "description" => "This is car",
-            "is_available" => true,
-            "available_date" => "Now"
-        ],
-        [
-            "id" => 2,
-            "name" => "iMac",
-            "physical_id" => "4859392",
-            "model" => "iMac",
-            "total" => 1,
-            "added_date" => "2023-03-03",
-            "description" => "This is iMac",
-            "is_available" => false,
-            "available_date" => "03/03/2023 11:00:00"
-        ]
-    ];
-
-    $id = $_GET['id'];
-    if(empty($id)){
-        header("location:index.php");
-    }
-
-    $current_asset = [];
-    foreach($assets as $asset){
-        if($asset["id"] == $id){
-            $current_asset = $asset;
-            break;
-        }
-    }
-    if(empty($current_asset)){
-        header("location:index.php");
-    }
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,30 +12,44 @@
 
 <body>
     <?php include 'inc/header.php' ?>
+    <?php
+        $id = $_GET['id'];
+        if (empty($id)) {
+            header("location:index.php");
+            return;
+        }
+
+        $asset_sql = "SELECT assets.*, COUNT(requests.request_id) AS number_of_requests, MAX(requests.end_date) AS available_date FROM assets LEFT JOIN requests ON assets.asset_id = requests.asset_id WHERE assets.asset_id = '$id' GROUP BY asset_id";
+        $result = mysqli_query($conn, $asset_sql);
+        $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $current_asset = $assets[0];
+        if (empty($current_asset)) {
+            header("location:index.php");
+            return;
+        }
+
+        $added_date = explode(" ", $current_asset["created_date"])[0];
+        $total = $current_asset["total"];
+        $available = (int)$current_asset["total"] - (int)$current_asset["number_of_requests"];
+        $is_available = $available > 0;
+        $available_date = $current_asset["available_date"] == NULL ? "Now" : $current_asset["available_date"];
+    ?>
     <main>
-        <h1><?php echo $current_asset["name"] ?></h1>
+        <h1><?php echo $current_asset["asset_name"] ?></h1>
         <section>
             <form action="/index.html" method="get">
                 <div class="form-section">
                     <div class="input-group">
                         <label for="name">Name: </label>
-                        <input disabled type="text" id="name" name="name" value="<?php echo $current_asset["name"] ?>" />
-                    </div>
-                    <div class="input-group">
-                        <label for="physical-id">Physical Id: </label>
-                        <input disabled type="text" id="physical-id" name="physical-id" value="<?php echo $current_asset["physical_id"] ?>" />
-                    </div>
-                    <div class="input-group">
-                        <label for="model">Model: </label>
-                        <input disabled type="text" id="model" name="model" value="<?php echo $current_asset["model"] ?>" />
+                        <input disabled type="text" id="name" name="name" value="<?php echo $current_asset["asset_name"] ?>" />
                     </div>
                     <div class="input-group">
                         <label for="total-stock">Total in stock: </label>
-                        <input disabled type="text" id="total-stock" name="total-stock" value="<?php echo $current_asset["total"] ?>" />
+                        <input disabled type="text" id="total-stock" name="total-stock" value="<?php echo $total ?>" />
                     </div>
                     <div class="input-group">
                         <label for="added-date">Added date: </label>
-                        <input disabled type="date" id="added-date" name="added-date" value="<?php echo $current_asset["added_date"] ?>" />
+                        <input disabled type="date" id="added-date" name="added-date" value="<?php echo $added_date ?>" />
                     </div>
                     <div class="input-group">
                         <label for="description">Description: </label>
@@ -87,13 +58,13 @@
                 </div>
                 <div class="approver-section">
                     <h2><u>Status</u></h2>
-                    <?php if($current_asset["is_available"]): ?>
-                        <p class="status-badge available">Available (1/1)</p>
-                    <?php else: ?>
+                    <?php if ($is_available) : ?>
+                        <p class="status-badge available">Available <?php echo "$available/$total" ?></p>
+                    <?php else : ?>
                         <p class="status-badge unavailable">Not Available</p>
                     <?php endif; ?>
                     <h2><u>Available date</u></h2>
-                    <p class="date-bold"><?php echo $current_asset["available_date"] ?></p>
+                    <p class="date-bold"><?php echo $available_date ?></p>
                 </div>
             </form>
         </section>

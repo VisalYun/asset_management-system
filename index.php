@@ -2,30 +2,6 @@
 $total_current_assets = 0;
 $total_pending_requests = 0;
 $total_approved_requests = 0;
-$asset = [
-    [
-        "id" => 1,
-        "name" => "Car",
-        "physical_id" => "0283939",
-        "model" => "Tesla",
-        "total" => 1,
-        "added_date" => "01/01/2023 12:00:00",
-        "description" => "This is car",
-        "isAvailable" => true,
-        "availableDate" => "Now"
-    ],
-    [
-        "id" => 2,
-        "name" => "iMac",
-        "physical_id" => "4859392",
-        "model" => "iMac",
-        "total" => 1,
-        "added_date" => "01/01/2023 12:00:00",
-        "description" => "This is iMac",
-        "isAvailable" => false,
-        "availableDate" => "03/03/2023 11:00:00"
-    ]
-];
 ?>
 
 <!DOCTYPE html>
@@ -59,9 +35,14 @@ $asset = [
                 <a href="/approved.php">View More &#8594;</a>
             </div>
         </section>
+        <?php
+            $asset_sql = "SELECT assets.*, COUNT(requests.request_id) AS number_of_requests, MAX(requests.end_date) AS available_date FROM assets LEFT JOIN requests ON assets.asset_id = requests.asset_id GROUP BY asset_id ORDER BY available_date";
+            $result = mysqli_query($conn, $asset_sql);
+            $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        ?>
         <section class="assets-list">
             <h2>Current Assets</h2>
-            <?php if (empty($asset)) : ?>
+            <?php if (empty($assets)) : ?>
                 <h3>There is no assets</h3>
             <?php else : ?>
                 <table>
@@ -71,17 +52,21 @@ $asset = [
                         <th>Status</th>
                         <th class="date-col">Availability date</th>
                     </tr>
-                    <?php foreach ($asset as $item) : ?>
-                        <?php $asset_id = $item["id"] ?>
+                    <?php foreach ($assets as $key=>$item) : ?>
+                        <?php 
+                            $asset_id = $item["asset_id"];
+                            $is_available = ((int)$item["total"] - (int)$item["number_of_requests"]) > 0;
+                            $available_date = $item["available_date"] == NULL ? "Now" : $item["available_date"];
+                        ?>
                         <tr onclick="getAssetDetail(<?php echo $asset_id ?>)">
-                            <td><?php echo $asset_id ?></td>
-                            <td><?php echo $item["name"] ?></td>
-                            <?php if($item["isAvailable"]): ?>
+                            <td><?php echo $key+1 ?></td>
+                            <td><?php echo $item["asset_name"] ?></td>
+                            <?php if($is_available): ?>
                                 <td><span class="available">Available</span></td>
                             <?php else: ?>
                                 <td><span class="unavailable">Not available</span></td>
                             <?php endif; ?>
-                            <td><?php echo $item["availableDate"] ?></td>
+                            <td><?php echo $available_date ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>

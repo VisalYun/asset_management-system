@@ -48,6 +48,9 @@
                             <?php endforeach ?>
                         </select>
                     </div>
+                    <?php 
+                        
+                    ?>
                     <div class="input-group">
                         <label for="asset">Asset to borrow: </label>
                         <select id="asset" name="asset">
