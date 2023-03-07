@@ -17,6 +17,22 @@ $total_approved_requests = 0;
 
 <body>
     <?php include 'inc/header.php' ?>
+    <?php
+        $total_pending_requests_sql = "SELECT COUNT(*) as total from requests where is_approved = 0;";
+        $result = mysqli_query($conn, $total_pending_requests_sql);
+        $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $total_pending_requests = $result_set[0]["total"];
+
+        $total_approved_requests_sql = "SELECT COUNT(*) as total from requests where is_approved = 1;";
+        $result = mysqli_query($conn, $total_approved_requests_sql);
+        $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $total_approved_requests = $result_set[0]["total"];
+
+        $asset_sql = "SELECT assets.*, COUNT(requests.request_id) AS number_of_requests, MAX(requests.end_date) AS available_date FROM assets LEFT JOIN requests ON assets.asset_id = requests.asset_id GROUP BY asset_id ORDER BY available_date";
+        $result = mysqli_query($conn, $asset_sql);
+        $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    ?>
+    
     <main>
         <section class="status-bar">
             <div class="status-card">
@@ -35,11 +51,6 @@ $total_approved_requests = 0;
                 <a href="/approved.php">View More &#8594;</a>
             </div>
         </section>
-        <?php
-            $asset_sql = "SELECT assets.*, COUNT(requests.request_id) AS number_of_requests, MAX(requests.end_date) AS available_date FROM assets LEFT JOIN requests ON assets.asset_id = requests.asset_id GROUP BY asset_id ORDER BY available_date";
-            $result = mysqli_query($conn, $asset_sql);
-            $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        ?>
         <section class="assets-list">
             <h2>Current Assets</h2>
             <?php if (empty($assets)) : ?>
@@ -52,18 +63,23 @@ $total_approved_requests = 0;
                         <th>Status</th>
                         <th class="date-col">Availability date</th>
                     </tr>
-                    <?php foreach ($assets as $key=>$item) : ?>
-                        <?php 
+                    <?php foreach ($assets as $key => $item) : ?>
+                        <?php
                             $asset_id = $item["asset_id"];
-                            $is_available = ((int)$item["total"] - (int)$item["number_of_requests"]) > 0;
-                            $available_date = $item["available_date"] == NULL ? "Now" : $item["available_date"];
+                            $is_available = ((int)$item["total"] > (int)$item["number_of_requests"]);
+                            if($is_available){
+                                $available_date = "Now";
+                            }
+                            else {
+                                $available_date = $item["available_date"] == NULL ? "Now" : $item["available_date"];
+                            }
                         ?>
                         <tr onclick="getAssetDetail(<?php echo $asset_id ?>)">
-                            <td><?php echo $key+1 ?></td>
+                            <td><?php echo $key + 1 ?></td>
                             <td><?php echo $item["asset_name"] ?></td>
-                            <?php if($is_available): ?>
+                            <?php if ($is_available) : ?>
                                 <td><span class="available">Available</span></td>
-                            <?php else: ?>
+                            <?php else : ?>
                                 <td><span class="unavailable">Not available</span></td>
                             <?php endif; ?>
                             <td><?php echo $available_date ?></td>
@@ -73,11 +89,12 @@ $total_approved_requests = 0;
             <?php endif; ?>
         </section>
     </main>
-    
+
     <script>
-        function getAssetDetail(id){
+        function getAssetDetail(id) {
             window.location = `/asset.php?id=${id}`;
         }
     </script>
 </body>
+
 </html>
