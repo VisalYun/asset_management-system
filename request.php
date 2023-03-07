@@ -136,7 +136,6 @@
             }
 
             function onBorrowedDateSelect(date, unavailable_date) {
-                //03/08/2023
                 $(".return-datepicker").val('');
                 $(".return-datepicker").datepicker("destroy");
                 borrow_date_arr = date.split("/")
