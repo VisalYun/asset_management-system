@@ -17,42 +17,44 @@
 <body>
     <?php include 'inc/header.php' ?>
     <?php
-    $user_sql = "SELECT * FROM users WHERE user_id=1;";
-    $result = mysqli_query($conn, $user_sql);
-    $user = mysqli_fetch_all($result, MYSQLI_ASSOC)[0];
+        $user_sql = "SELECT * FROM users WHERE user_id=1;";
+        $result = mysqli_query($conn, $user_sql);
+        $user = mysqli_fetch_all($result, MYSQLI_ASSOC)[0];
 
-    $people_sql = "SELECT user_id, user_name FROM users WHERE user_id<>1";
-    $result = mysqli_query($conn, $people_sql);
-    $people = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $people_sql = "SELECT user_id, user_name FROM users WHERE user_id<>1";
+        $result = mysqli_query($conn, $people_sql);
+        $people = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    $assets_sql = "SELECT * FROM assets;";
-    $result = mysqli_query($conn, $assets_sql);
-    $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $assets_sql = "SELECT * FROM assets;";
+        $result = mysqli_query($conn, $assets_sql);
+        $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    //$assets = ["Car"];
-    $return_date = date('Y-m-d', strtotime(" +3 days"));
+        $return_date = date('Y-m-d', strtotime(" +3 days"));
 
-    if (isset($_POST["submit"])) {
-        $name = filter_var($user["user_id"], FILTER_SANITIZE_SPECIAL_CHARS);
-        $on_behalf_person = filter_input(INPUT_POST, 'behalf-person', FILTER_SANITIZE_SPECIAL_CHARS);
-        $borrow_asset = filter_input(INPUT_POST, 'asset', FILTER_SANITIZE_SPECIAL_CHARS);
-        $start_date = filter_input(INPUT_POST, 'start-date', FILTER_SANITIZE_SPECIAL_CHARS);
-        $end_date = filter_input(INPUT_POST, 'end-date', FILTER_SANITIZE_SPECIAL_CHARS);
-        $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
+        $admin_sql = "SELECT user_id, user_name, user_email FROM users WHERE is_admin=1 LIMIT 1;";
+        $result = mysqli_query($conn, $admin_sql);
+        $approvers = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-        $on_behalf_person = trim($on_behalf_person) == '' ? $user["user_id"] : $on_behalf_person;
-        $submit_request_sql = "INSERT INTO requests (user_id, asset_id, owner_id, start_date, end_date, description) VALUES ($name, $borrow_asset, $on_behalf_person, STR_TO_DATE(\"$start_date\", \"%m/%d/%Y\"), STR_TO_DATE(\"$end_date\", \"%m/%d/%Y\"), '$description')";
-        echo $submit_request_sql;
-        $result = mysqli_query($conn, $submit_request_sql);
-        if ($result) {
-            // success
-            header('Location: pending.php');
-        } else {
-            // error
-            echo 'Error: ' . mysqli_error($conn);
+        if (isset($_POST["submit"])) {
+            $name = filter_var($user["user_id"], FILTER_SANITIZE_SPECIAL_CHARS);
+            $on_behalf_person = filter_input(INPUT_POST, 'behalf-person', FILTER_SANITIZE_SPECIAL_CHARS);
+            $borrow_asset = filter_input(INPUT_POST, 'asset', FILTER_SANITIZE_SPECIAL_CHARS);
+            $start_date = filter_input(INPUT_POST, 'start-date', FILTER_SANITIZE_SPECIAL_CHARS);
+            $end_date = filter_input(INPUT_POST, 'end-date', FILTER_SANITIZE_SPECIAL_CHARS);
+            $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
+
+            $on_behalf_person = trim($on_behalf_person) == '' ? $user["user_id"] : $on_behalf_person;
+            $submit_request_sql = "INSERT INTO requests (user_id, asset_id, owner_id, start_date, end_date, description) VALUES ($name, $borrow_asset, $on_behalf_person, STR_TO_DATE(\"$start_date\", \"%m/%d/%Y\"), STR_TO_DATE(\"$end_date\", \"%m/%d/%Y\"), '$description')";
+            echo $submit_request_sql;
+            $result = mysqli_query($conn, $submit_request_sql);
+            if ($result) {
+                // success
+                header('Location: index.php');
+            } else {
+                // error
+                echo 'Error: ' . mysqli_error($conn);
+            }
         }
-        // echo "$name, $on_behalf_person, $borrow_asset, $start_date, $end_date, $description";
-    }
     ?>
     <main>
         <h1>Request Application</h1>
@@ -103,7 +105,13 @@
                 <div class="approver-section">
                     <h2>Approvers</h2>
                     <ul>
-                        <li>Admin<br />admin@corporation.com</li>
+                        <?php foreach($approvers as $approver): ?>
+                            <li id="<?php echo $approver["user_id"] ?>">
+                                <?php echo $approver["user_name"] ?>
+                                <br />
+                                <?php echo $approver["user_email"] ?>
+                            </li>
+                        <?php endforeach ?>
                     </ul>
                 </div>
             </form>

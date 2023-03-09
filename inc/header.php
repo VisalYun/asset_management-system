@@ -1,4 +1,11 @@
 <?php include "config/database.php"; ?>
+<?php
+    if (!isset($_COOKIE['user_id'])) {
+        header('Location: login.php');
+    }
+
+    $user_id = $_COOKIE['user_id'];
+?>
 
 <!DOCTYPE html>
 <html lang="en">

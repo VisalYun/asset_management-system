@@ -69,6 +69,17 @@ form .approver-section ul li {
     color: #777;
 }
 
+.action-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+}
+
+.action-container input[type=submit]{
+    width: 100%;
+}
+
 @media only screen and (max-width: 900px) {
     form {
         flex-direction: column;

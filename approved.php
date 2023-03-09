@@ -1,18 +1,3 @@
-<?php
-$request_transaction = [
-    [
-        "id" => 1,
-        "asset_name" => "iMac",
-        "request_date" => "22/02/2023 15:00:00",
-        "borrowed_date" => "23/02/2023 12:00:00",
-        "returned_date" => "27/02/2023 15:00:00",
-        "is_approved" => true,
-        "approved_date" => "22/02/2023 17:00:00",
-        "delivered_date" => "23/02/2023 12:00:00",
-    ]
-]
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,6 +12,11 @@ $request_transaction = [
 
 <body>
     <?php include 'inc/header.php' ?>
+    <?php
+        $total_approved_requests_sql = "SELECT requests.*, assets.asset_name from requests INNER JOIN assets on requests.asset_id = assets.asset_id where user_id = $user_id and is_approved = 1 and status = 'Approved';";
+        $result = mysqli_query($conn, $total_approved_requests_sql);
+        $request_transaction = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    ?>
     <main>
         <section class="current-asset">
             <h1>Approved Request</h1>
@@ -41,13 +31,13 @@ $request_transaction = [
                         <th class="date-col">Approved date</th>
                         <th class="date-col">Delivered date</th>
                     </tr>
-                    <?php foreach($request_transaction as $item): ?>
+                    <?php foreach($request_transaction as $key => $item): ?>
                         <tr>
-                            <td><?php echo $item["id"] ?></td>
+                            <td><?php echo $key + 1 ?></td>
                             <td><?php echo $item["asset_name"] ?></td>
-                            <td><?php echo $item["request_date"] ?></td>
+                            <td><?php echo $item["created_date"] ?></td>
                             <td><?php echo $item["approved_date"] ?></td>
-                            <td><?php echo $item["delivered_date"] ?></td>
+                            <td><?php echo $item["start_date"] ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>

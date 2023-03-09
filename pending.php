@@ -1,18 +1,3 @@
-<?php
-$request_transaction = [
-    [
-        "id" => 2,
-        "asset_name" => "Car",
-        "request_date" => "22/02/2023 15:00:00",
-        "borrowed_date" => "23/02/2023 12:00:00",
-        "returned_date" => "27/02/2023 15:00:00",
-        "is_approved" => false,
-        "approved_date" => "",
-        "delivered_date" => "",
-    ]
-]
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,6 +12,11 @@ $request_transaction = [
 
 <body>
     <?php include 'inc/header.php' ?>
+    <?php
+        $total_pending_requests_sql = "SELECT requests.*, assets.asset_name from requests INNER JOIN assets on requests.asset_id = assets.asset_id where user_id = $user_id and is_approved = 0;";
+        $result = mysqli_query($conn, $total_pending_requests_sql);
+        $request_transaction = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    ?>
     <main>
         <section class="pending-request">
             <h1>Pending Request</h1>
@@ -40,12 +30,12 @@ $request_transaction = [
                         <th class="date-col">Requested date</th>
                         <th class="name-col">Await Action</th>
                     </tr>
-                    <?php foreach ($request_transaction as $item) : ?>
+                    <?php foreach ($request_transaction as $key => $item) : ?>
                         <tr>
-                            <td><?php echo $item["id"] ?></td>
+                            <td><?php echo $key+1 ?></td>
                             <td><?php echo $item["asset_name"] ?></td>
-                            <td><?php echo $item["request_date"] ?></td>
-                            <td>Waiting for 1 approval</td>
+                            <td><?php echo $item["created_date"] ?></td>
+                            <td>Waiting for admin approval</td>
                         </tr>
                     <?php endforeach ?>
                 </table>
