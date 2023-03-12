@@ -6,13 +6,13 @@ main h1 {
     margin-bottom: 1rem;
 }
 
-form {
+.form-container {
     display: flex;
     justify-content: space-between;
     align-items: start;
 }
 
-form .form-section {
+.form-container .form-section {
     width: 50%;
     box-shadow: 10px 5px 5px #ddd;
     border-radius: 10px;
@@ -20,7 +20,7 @@ form .form-section {
     padding: 1rem;
 }
 
-form .form-section .input-group {
+.form-container .form-section .input-group {
     margin: 1rem 0;
     display: flex;
     align-items: center;
@@ -28,19 +28,19 @@ form .form-section .input-group {
     font-size: 18px;
 }
 
-form .form-section .input-group label {
+.form-container .form-section .input-group label {
     width: 30%;
 }
 
-form .form-section .input-group input,
-form .form-section .input-group select,
-form .form-section .input-group textarea {
+.form-container .form-section .input-group input,
+.form-container .form-section .input-group select,
+.form-container .form-section .input-group textarea {
     width: 70%;
     font-size: 18px;
     padding: .5rem;
 }
 
-form .form-section .input-group input[type=submit] {
+.form-container .form-section .input-group input[type=submit] {
     width: 30%;
     margin: auto;
     border: none;
@@ -51,18 +51,18 @@ form .form-section .input-group input[type=submit] {
     cursor: pointer;
 }
 
-form .approver-section {
+.form-container .approver-section {
     width: 40%;
 }
 
-form .approver-section ul {
+.form-container .approver-section ul {
     list-style-type: none;
     height: 200px;
     border: 1px solid black;
     margin: 1rem 0;
 }
 
-form .approver-section ul li {
+.form-container .approver-section ul li {
     border-bottom: 1px solid black;
     padding: .5rem;
     background-color: #eee;
@@ -73,24 +73,46 @@ form .approver-section ul li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 50%;
+    width: 70%;
 }
 
-.action-container input[type=submit]{
+.action-container form{
+    width: 50%;
+    margin-right: 1rem;
+}
+
+.action-container form input[type=submit]{
     width: 100%;
+    border: none;
+    outline: none;
+    padding: .5rem 0;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.action-container form input[type=submit].return {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.action-container form input[type=submit].cancel {
+    background-color: var(--danger-color);
+    color: white;
 }
 
 @media only screen and (max-width: 900px) {
-    form {
+    .form-container {
         flex-direction: column;
     }
 
-    form .form-section {
+    .form-container .form-section {
         width: 100%;
         margin-bottom: 2rem;
     }
 
-    form .approver-section {
+    .form-container .approver-section {
         width: 100%;
     }
 }
@@ -100,22 +122,22 @@ form .approver-section ul li {
         padding: 2rem .5rem;
     }
 
-    form .form-section .input-group {
+    .form-container .form-section .input-group {
         flex-direction: column;
         align-items: start;
     }
 
-    form .form-section .input-group label {
+    .form-container .form-section .input-group label {
         width: 100%;
     }
 
-    form .form-section .input-group input,
-    form .form-section .input-group select,
-    form .form-section .input-group textarea {
+    .form-container .form-section .input-group input,
+    .form-container .form-section .input-group select,
+    .form-container .form-section .input-group textarea {
         width: 100%;
     }
 
-    form .form-section .input-group button{
+    .form-container .form-section .input-group button{
         width: 70%;
     }
 }

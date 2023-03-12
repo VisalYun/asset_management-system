@@ -16,7 +16,7 @@
     $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
     $total_assets = $result_set[0]["total"];
 
-    $sql = "SELECT start_date, end_date FROM requests WHERE asset_id = $id";
+    $sql = "SELECT start_date, end_date FROM requests WHERE asset_id = $id and is_deleted = 0;";
     $result = mysqli_query($conn, $sql);
     $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
 

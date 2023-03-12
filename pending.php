@@ -13,7 +13,7 @@
 <body>
     <?php include 'inc/header.php' ?>
     <?php
-        $total_pending_requests_sql = "SELECT requests.*, assets.asset_name from requests INNER JOIN assets on requests.asset_id = assets.asset_id where user_id = $user_id and is_approved = 0;";
+        $total_pending_requests_sql = "SELECT requests.*, assets.asset_name from requests INNER JOIN assets on requests.asset_id = assets.asset_id where owner_id = $user_id and is_approved = 0 and is_deleted = 0;";
         $result = mysqli_query($conn, $total_pending_requests_sql);
         $request_transaction = mysqli_fetch_all($result, MYSQLI_ASSOC);
     ?>
@@ -31,7 +31,8 @@
                         <th class="name-col">Await Action</th>
                     </tr>
                     <?php foreach ($request_transaction as $key => $item) : ?>
-                        <tr>
+                        <?php $request_id = $item["request_id"] ?>
+                        <tr onclick="getRequestDetail(<?php echo $request_id ?>)">
                             <td><?php echo $key+1 ?></td>
                             <td><?php echo $item["asset_name"] ?></td>
                             <td><?php echo $item["created_date"] ?></td>
@@ -42,6 +43,12 @@
             <?php endif ?>
         </section>
     </main>
+
+    <script>
+        function getRequestDetail(id) {
+            window.location = `/request_status.php?id=${id}`;
+        }
+    </script>
 </body>
 
 </html>

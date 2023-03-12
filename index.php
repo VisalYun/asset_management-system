@@ -12,17 +12,17 @@
 <body>
     <?php include 'inc/header.php' ?>
     <?php
-        $total_current_assets_sql = "SELECT COUNT(*) as total from requests where user_id = $user_id and status = 'Active';";
+        $total_current_assets_sql = "SELECT COUNT(*) as total from requests where owner_id = $user_id and status = 'Active' and is_deleted = 0;";
         $result = mysqli_query($conn, $total_current_assets_sql);
         $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $total_current_assets = $result_set[0]["total"];
         
-        $total_pending_requests_sql = "SELECT COUNT(*) as total from requests where user_id = $user_id and is_approved = 0;";
+        $total_pending_requests_sql = "SELECT COUNT(*) as total from requests where owner_id = $user_id and is_approved = 0 and is_deleted = 0;";
         $result = mysqli_query($conn, $total_pending_requests_sql);
         $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $total_pending_requests = $result_set[0]["total"];
 
-        $total_approved_requests_sql = "SELECT COUNT(*) as total from requests where user_id = $user_id and is_approved = 1 and status = 'Approved'; ";
+        $total_approved_requests_sql = "SELECT COUNT(*) as total from requests where owner_id = $user_id and is_approved = 1 and status = 'Approved' and is_deleted = 0;";
         $result = mysqli_query($conn, $total_approved_requests_sql);
         $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $total_approved_requests = $result_set[0]["total"];
