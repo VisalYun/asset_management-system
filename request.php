@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <link rel="stylesheet" href="/styles/request.css">
@@ -16,43 +15,39 @@
 <body>
     <?php include 'inc/header.php' ?>
     <?php
-    $user_sql = "SELECT * FROM users WHERE user_id=$user_id;";
-    $result = mysqli_query($conn, $user_sql);
-    $user = mysqli_fetch_all($result, MYSQLI_ASSOC)[0];
+        require_once('./controllers/users/get_user_info.php');
+        $user = get_user_info($conn, $user_id);
 
-    $people_sql = "SELECT user_id, user_name FROM users WHERE user_id<>$user_id";
-    $result = mysqli_query($conn, $people_sql);
-    $people = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        require_once('./controllers/users/get_all_users.php');
+        $people = get_all_users($conn, $user_id);
 
-    $assets_sql = "SELECT * FROM assets;";
-    $result = mysqli_query($conn, $assets_sql);
-    $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        require_once('./controllers/assets/get_all_assets.php');
+        $assets = get_all_assets($conn);
 
-    $return_date = date('Y-m-d', strtotime(" +3 days"));
+        $return_date = date('Y-m-d', strtotime(" +3 days"));
 
-    $admin_sql = "SELECT user_id, user_name, user_email FROM users WHERE is_admin=1 LIMIT 1;";
-    $result = mysqli_query($conn, $admin_sql);
-    $approvers = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        require_once('./controllers/users/get_admin_user.php');
+        $approvers = get_admin_user($conn);
 
-    if (isset($_POST["submit"])) {
-        $name = filter_var($user["user_id"], FILTER_SANITIZE_SPECIAL_CHARS);
-        $on_behalf_person = filter_input(INPUT_POST, 'behalf-person', FILTER_SANITIZE_SPECIAL_CHARS);
-        $borrow_asset = filter_input(INPUT_POST, 'asset', FILTER_SANITIZE_SPECIAL_CHARS);
-        $start_date = filter_input(INPUT_POST, 'start-date', FILTER_SANITIZE_SPECIAL_CHARS);
-        $end_date = filter_input(INPUT_POST, 'end-date', FILTER_SANITIZE_SPECIAL_CHARS);
-        $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
-
-        $on_behalf_person = trim($on_behalf_person) == '' ? $user["user_id"] : $on_behalf_person;
-        $submit_request_sql = "INSERT INTO requests (user_id, asset_id, owner_id, start_date, end_date, description) VALUES ($name, $borrow_asset, $on_behalf_person, STR_TO_DATE(\"$start_date\", \"%m/%d/%Y\"), STR_TO_DATE(\"$end_date\", \"%m/%d/%Y\"), '$description')";
-        $result = mysqli_query($conn, $submit_request_sql);
-        if ($result) {
-            // success
-            header('Location: index.php');
-        } else {
-            // error
-            echo 'Error: ' . mysqli_error($conn);
+        if (isset($_POST["submit"])) {
+            $name = filter_var($user["user_id"], FILTER_SANITIZE_SPECIAL_CHARS);
+            $on_behalf_person = filter_input(INPUT_POST, 'behalf-person', FILTER_SANITIZE_SPECIAL_CHARS);
+            $on_behalf_person = trim($on_behalf_person) == '' ? $user["user_id"] : $on_behalf_person;
+            $borrow_asset = filter_input(INPUT_POST, 'asset', FILTER_SANITIZE_SPECIAL_CHARS);
+            $start_date = filter_input(INPUT_POST, 'start-date', FILTER_SANITIZE_SPECIAL_CHARS);
+            $end_date = filter_input(INPUT_POST, 'end-date', FILTER_SANITIZE_SPECIAL_CHARS);
+            $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
+            
+            require_once('./models/submit_request_dto.php');
+            $new_request = new SubmitRequestDto($name, $on_behalf_person, $borrow_asset, $start_date, $end_date, $description);
+            require_once('./controllers/requests/submit_request.php');
+            $submit_request_result = submit_request($conn, $new_request);
+            if ($submit_request_result) {
+                header('Location: index.php');
+            } else {
+                echo 'Error: ' . mysqli_error($conn);
+            }
         }
-    }
     ?>
     <main>
         <h1>Request Application</h1>

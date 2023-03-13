@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <link rel="stylesheet" href="/styles/request.css">
@@ -22,52 +21,40 @@
         return;
     }
 
-    $request_sql = "SELECT * FROM requests WHERE request_id = $request_id";
-    $result = mysqli_query($conn, $request_sql);
-    $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    $request = $result_set[0];
+    require_once('./controllers/requests/get_request_info.php');
+    $request = get_request_info($conn, $request_id);
 
-    $user_id = $request["user_id"];
-    $user_sql = "SELECT * FROM users WHERE user_id=$user_id;";
-    $result = mysqli_query($conn, $user_sql);
-    $user = mysqli_fetch_all($result, MYSQLI_ASSOC)[0];
+    require_once('./controllers/users/get_user_info.php');
+    $user = get_user_info($conn, $user_id);
 
-    $people_sql = "SELECT user_id, user_name FROM users WHERE user_id<>$user_id";
-    $result = mysqli_query($conn, $people_sql);
-    $people = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    require_once('./controllers/users/get_all_users.php');
+    $people = get_all_users($conn, $user_id);
 
-    $assets_sql = "SELECT * FROM assets;";
-    $result = mysqli_query($conn, $assets_sql);
-    $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    require_once('./controllers/assets/get_all_assets.php');
+    $assets = get_all_assets($conn);
 
     $borrow_date = $request["start_date"];
     $return_date = $request["end_date"];
     $status = $request["status"];
 
-    $admin_sql = "SELECT user_id, user_name, user_email FROM users WHERE is_admin=1 LIMIT 1;";
-    $result = mysqli_query($conn, $admin_sql);
-    $approvers = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    require_once('./controllers/users/get_admin_user.php');
+    $approvers = get_admin_user($conn);
 
-    $current_date = date("Y-m-d h:m:s");
     if (isset($_POST["return"])) {
-        $return_sql = "UPDATE requests SET status = 'Return', modifies_date = '$current_date', modifies_user = $user_id WHERE request_id = $request_id;";
-        $result = mysqli_query($conn, $return_sql);
-        if ($result) {
-            // success
+        require_once('./controllers/requests/return_asset.php');
+        $result_result = return_asset($conn, $user_id, $request_id);
+        if ($result_result) {
             header('Location: index.php');
         } else {
-            // error
             echo 'Error: ' . mysqli_error($conn);
         }
     }
     if (isset($_POST["cancel"])) {
-        $return_sql = "UPDATE requests SET is_deleted = 1, modifies_date = '$current_date', modifies_user = $user_id WHERE request_id = $request_id;";
-        $result = mysqli_query($conn, $return_sql);
-        if ($result) {
-            // success
+        require_once('./controllers/requests/cancel_asset.php');
+        $cancel_result = cancel_request($conn, $user_id, $request_id);
+        if ($cancel_result) {
             header('Location: index.php');
         } else {
-            // error
             echo 'Error: ' . mysqli_error($conn);
         }
     }

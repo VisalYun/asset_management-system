@@ -20,11 +20,8 @@
         }
 
         if (isset($_POST["login"])) {
-            $login_sql = "SELECT * from users where user_id = 1;";
-            $result = mysqli_query($conn, $login_sql);
-            $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-            $user = $result_set[0];
+            require_once('./controllers/users/login.php');
+            $user = login($conn, 1);
             setcookie('user_id', $user["user_id"], time() + 3600);
             header('Location: index.php');
         }

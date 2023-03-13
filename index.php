@@ -12,20 +12,14 @@
 <body>
     <?php include 'inc/header.php' ?>
     <?php
-        $total_current_assets_sql = "SELECT COUNT(*) as total from requests where owner_id = $user_id and status = 'Active' and is_deleted = 0;";
-        $result = mysqli_query($conn, $total_current_assets_sql);
-        $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $total_current_assets = $result_set[0]["total"];
+        require_once('./controllers/requests/get_user_total_current_asset.php');
+        $total_current_assets = get_user_total_current_assets($conn, $user_id);
         
-        $total_pending_requests_sql = "SELECT COUNT(*) as total from requests where owner_id = $user_id and is_approved = 0 and is_deleted = 0;";
-        $result = mysqli_query($conn, $total_pending_requests_sql);
-        $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $total_pending_requests = $result_set[0]["total"];
+        require_once('./controllers/requests/get_user_total_pending_request.php');
+        $total_pending_requests = get_user_total_pending_request($conn, $user_id);
 
-        $total_approved_requests_sql = "SELECT COUNT(*) as total from requests where owner_id = $user_id and is_approved = 1 and status = 'Approved' and is_deleted = 0;";
-        $result = mysqli_query($conn, $total_approved_requests_sql);
-        $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $total_approved_requests = $result_set[0]["total"];
+        require_once('./controllers/requests/get_user_total_approved_request.php');
+        $total_approved_requests = get_user_total_approved_request($conn, $user_id);
 
         $asset_sql = "SELECT assets.*, COUNT(requests.request_id) AS number_of_requests, MAX(requests.end_date) AS available_date FROM assets LEFT JOIN requests ON assets.asset_id = requests.asset_id GROUP BY asset_id ORDER BY available_date";
         $result = mysqli_query($conn, $asset_sql);
